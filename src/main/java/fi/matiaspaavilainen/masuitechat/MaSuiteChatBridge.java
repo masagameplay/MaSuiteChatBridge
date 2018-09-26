@@ -4,6 +4,7 @@ import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -19,10 +20,10 @@ public class MaSuiteChatBridge extends JavaPlugin implements Listener {
         this.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new Channel(this));
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onMessage(AsyncPlayerChatEvent e) {
-        Player p = e.getPlayer();
         e.setCancelled(true);
+        Player p = e.getPlayer();
         ByteArrayDataOutput output = ByteStreams.newDataOutput();
         output.writeUTF("MaSuiteChat");
         output.writeUTF(p.getName());
