@@ -21,8 +21,9 @@ public class Mail implements CommandExecutor {
         if (!(cs instanceof Player)) {
             return false;
         }
-        if (args.length > 1) {
-            Player p = (Player) cs;
+        Player p = (Player) cs;
+        if (args.length > 2) {
+
 
             StringBuilder msg = new StringBuilder();
             int i;
@@ -33,12 +34,21 @@ public class Mail implements CommandExecutor {
             ByteArrayDataOutput out = ByteStreams.newDataOutput();
             out.writeUTF("MaSuiteChat");
             out.writeUTF("Mail");
+            out.writeUTF("Send");
             out.writeUTF(p.getName());
             out.writeUTF(args[0]);
             out.writeUTF(msg.toString());
             p.sendPluginMessage(plugin, "BungeeCord", out.toByteArray());
-        } else {
-            // Syntax message
+        } else if(args.length == 1) {
+            if(args[0].equalsIgnoreCase("read")){
+                ByteArrayDataOutput out = ByteStreams.newDataOutput();
+                out.writeUTF("MaSuiteChat");
+                out.writeUTF("Mail");
+                out.writeUTF("Read");
+                out.writeUTF(p.getName());
+                p.sendPluginMessage(plugin, "BungeeCord", out.toByteArray());
+            }
+
         }
         return false;
     }

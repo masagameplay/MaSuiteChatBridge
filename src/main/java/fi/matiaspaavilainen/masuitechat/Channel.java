@@ -11,7 +11,7 @@ import java.io.IOException;
 
 public class Channel implements PluginMessageListener {
 
-    private static MaSuiteChatBridge plugin;
+    private MaSuiteChatBridge plugin;
 
     Channel(MaSuiteChatBridge p) {
         plugin = p;
