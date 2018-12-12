@@ -1,4 +1,4 @@
-package fi.matiaspaavilainen.masuitechat.commands.channels;
+package fi.matiaspaavilainen.masuitechat.commands;
 
 import com.google.common.base.Joiner;
 import fi.matiaspaavilainen.masuitechat.MaSuiteChatBridge;
@@ -11,39 +11,24 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-public class Server implements CommandExecutor {
+public class Reply implements CommandExecutor {
 
     private MaSuiteChatBridge plugin;
 
-    public Server(MaSuiteChatBridge p) {
+    public Reply(MaSuiteChatBridge p){
         plugin = p;
     }
-
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
-        if (!(sender instanceof Player)) {
+        if(!(sender instanceof Player)){
             return false;
         }
-
-        Player p = (Player) sender;
-        if (args.length == 0) {
+    Player p = (Player) sender;
+        if(args.length > 0 ){
             try (ByteArrayOutputStream b = new ByteArrayOutputStream();
                  DataOutputStream out = new DataOutputStream(b)) {
                 out.writeUTF("MaSuiteChat");
-                out.writeUTF("ToggleChannel");
-                out.writeUTF("server");
-                out.writeUTF(p.getUniqueId().toString());
-                p.sendPluginMessage(plugin, "BungeeCord", b.toByteArray());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        if (args.length > 0) {
-            try (ByteArrayOutputStream b = new ByteArrayOutputStream();
-                 DataOutputStream out = new DataOutputStream(b)) {
-                out.writeUTF("MaSuiteChat");
-                out.writeUTF("SendMessage");
-                out.writeUTF("server");
+                out.writeUTF("Reply");
                 out.writeUTF(p.getUniqueId().toString());
                 out.writeUTF(Joiner.on(" ").join(args));
                 p.sendPluginMessage(plugin, "BungeeCord", b.toByteArray());

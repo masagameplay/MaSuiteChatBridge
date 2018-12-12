@@ -1,12 +1,14 @@
 package fi.matiaspaavilainen.masuitechat.commands;
 
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
 import fi.matiaspaavilainen.masuitechat.MaSuiteChatBridge;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 
 public class Mail implements CommandExecutor {
 
@@ -22,31 +24,58 @@ public class Mail implements CommandExecutor {
             return false;
         }
         Player p = (Player) cs;
-        if (args.length > 2) {
-
-
+        ByteArrayOutputStream b = new ByteArrayOutputStream();
+        DataOutputStream out = new DataOutputStream(b);
+        if (args.length >= 2) {
+            if (args[0].equalsIgnoreCase("sendall")) {
+                if (!p.hasPermission("masuitechat.mail.sendall")) {
+                    //TODO: CHANGE
+                    p.sendMessage("noperm");
+                    return false;
+                }
+            }
+            if (!p.hasPermission("masuitechat.mail.send")) {
+                //TODO: CHANGE
+                p.sendMessage("noperm");
+                return false;
+            }
             StringBuilder msg = new StringBuilder();
             int i;
             for (i = 1; i < args.length; i++) {
                 msg.append(args[i]).append(" ");
             }
-
-            ByteArrayDataOutput out = ByteStreams.newDataOutput();
-            out.writeUTF("MaSuiteChat");
-            out.writeUTF("Mail");
-            out.writeUTF("Send");
-            out.writeUTF(p.getName());
-            out.writeUTF(args[0]);
-            out.writeUTF(msg.toString());
-            p.sendPluginMessage(plugin, "BungeeCord", out.toByteArray());
-        } else if(args.length == 1) {
-            if(args[0].equalsIgnoreCase("read")){
-                ByteArrayDataOutput out = ByteStreams.newDataOutput();
+            try {
                 out.writeUTF("MaSuiteChat");
                 out.writeUTF("Mail");
-                out.writeUTF("Read");
-                out.writeUTF(p.getName());
-                p.sendPluginMessage(plugin, "BungeeCord", out.toByteArray());
+                if (!args[0].equalsIgnoreCase("sendall")) {
+                    out.writeUTF("Send");
+                    out.writeUTF(p.getName());
+                    out.writeUTF(args[0]);
+                } else {
+                    out.writeUTF("SendAll");
+                    out.writeUTF(p.getName());
+                }
+                out.writeUTF(msg.toString());
+                p.sendPluginMessage(plugin, "BungeeCord", b.toByteArray());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else if (args.length == 1) {
+            if (args[0].equalsIgnoreCase("read")) {
+                if (!p.hasPermission("masuitechat.mail.read")) {
+                    //TODO: CHANGE
+                    p.sendMessage("noperm");
+                    return false;
+                }
+                try {
+                    out.writeUTF("MaSuiteChat");
+                    out.writeUTF("Mail");
+                    out.writeUTF("Read");
+                    out.writeUTF(p.getName());
+                    p.sendPluginMessage(plugin, "BungeeCord", b.toByteArray());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
 
         }

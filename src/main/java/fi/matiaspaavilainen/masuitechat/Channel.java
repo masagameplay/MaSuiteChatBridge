@@ -1,7 +1,9 @@
 package fi.matiaspaavilainen.masuitechat;
 
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.chat.ComponentSerializer;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
@@ -27,15 +29,30 @@ public class Channel implements PluginMessageListener {
         try {
             subchannel = in.readUTF();
             if (subchannel.equals("LocalChat")) {
-                LocalChat.sendMessage(p, in.readUTF(), in.readInt());
+                String inMsg = in.readUTF();
+                int range = in.readInt();
+                Location loc = p.getLocation();
+                for (Player pl : Bukkit.getOnlinePlayers()) {
+                    if (pl.getLocation().distance(loc) <= range) {
+                        TextComponent msg = new TextComponent(ComponentSerializer.parse(inMsg));
+                        pl.spigot().sendMessage(msg);
+                    }
+                }
+            }
+            if (subchannel.equals("StaffChat")) {
+                String inMsg = in.readUTF();
+                for (Player pl : Bukkit.getOnlinePlayers()) {
+                    if (pl.hasPermission("masuitechat.channel.staff")) {
+                        TextComponent msg = new TextComponent(ComponentSerializer.parse(inMsg));
+                        pl.spigot().sendMessage(msg);
+                    }
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
     }
-
-
 
 
 }

@@ -38,20 +38,20 @@ public class Local implements CommandExecutor {
                 e.printStackTrace();
             }
         }
-        if (args.length > 0){
-                try (ByteArrayOutputStream b = new ByteArrayOutputStream();
-                     DataOutputStream out = new DataOutputStream(b)) {
-                    out.writeUTF("MaSuiteChat");
-                    out.writeUTF("SendMessage");
-                    out.writeUTF("local");
-                    out.writeUTF(p.getUniqueId().toString());
-                    out.writeUTF(Joiner.on(" ").join(args));
-                    p.sendPluginMessage(plugin, "BungeeCord", b.toByteArray());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+        if (args.length > 0) {
+            try (ByteArrayOutputStream b = new ByteArrayOutputStream();
+                 DataOutputStream out = new DataOutputStream(b)) {
+                out.writeUTF("MaSuiteChat");
+                out.writeUTF("SendMessage");
+                out.writeUTF("local");
+                out.writeUTF(p.getUniqueId().toString());
+                out.writeUTF(Joiner.on(" ").join(args));
+                p.sendPluginMessage(plugin, "BungeeCord", b.toByteArray());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-        return false;
+        return true;
     }
 }
 

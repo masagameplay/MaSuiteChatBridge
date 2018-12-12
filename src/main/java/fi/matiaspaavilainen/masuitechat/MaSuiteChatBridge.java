@@ -1,14 +1,19 @@
 package fi.matiaspaavilainen.masuitechat;
 
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
 import fi.matiaspaavilainen.masuitechat.commands.Mail;
+import fi.matiaspaavilainen.masuitechat.commands.Nick;
+import fi.matiaspaavilainen.masuitechat.commands.Reply;
+import fi.matiaspaavilainen.masuitechat.commands.channels.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 
 public class MaSuiteChatBridge extends JavaPlugin implements Listener {
 
@@ -21,17 +26,37 @@ public class MaSuiteChatBridge extends JavaPlugin implements Listener {
         this.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new Channel(this));
 
         getCommand("mail").setExecutor(new Mail(this));
+
+        registerCommands();
     }
 
+
+    public void registerCommands(){
+        // Channels
+        getCommand("staff").setExecutor(new Staff(this));
+        getCommand("global").setExecutor(new Global(this));
+        getCommand("server").setExecutor(new Server(this));
+        getCommand("local").setExecutor(new Local(this));
+        getCommand("tell").setExecutor(new Private(this));
+        getCommand("reply").setExecutor(new Reply(this));
+
+        // Nick
+        getCommand("nick").setExecutor(new Nick(this));
+    }
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onMessage(AsyncPlayerChatEvent e) {
         e.setCancelled(true);
         Player p = e.getPlayer();
-        ByteArrayDataOutput out = ByteStreams.newDataOutput();
-        out.writeUTF("MaSuiteChat");
-        out.writeUTF("Chat");
-        out.writeUTF(p.getName());
-        out.writeUTF(e.getMessage());
-        p.sendPluginMessage(this, "BungeeCord", out.toByteArray());
+        ByteArrayOutputStream b = new ByteArrayOutputStream();
+        DataOutputStream out = new DataOutputStream(b);
+        try {
+            out.writeUTF("MaSuiteChat");
+            out.writeUTF("Chat");
+            out.writeUTF(p.getUniqueId().toString());
+            out.writeUTF(e.getMessage());
+            p.sendPluginMessage(this, "BungeeCord", b.toByteArray());
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
     }
 }

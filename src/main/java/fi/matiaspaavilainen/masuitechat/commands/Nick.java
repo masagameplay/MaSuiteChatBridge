@@ -29,6 +29,7 @@ public class Nick implements CommandExecutor {
                  DataOutputStream out = new DataOutputStream(b)) {
                 out.writeUTF("MaSuiteChat");
                 out.writeUTF("Nick");
+                out.writeUTF(p.getUniqueId().toString());
                 out.writeUTF(args[0]);
                 p.sendPluginMessage(plugin, "BungeeCord", b.toByteArray());
             } catch (IOException e) {
@@ -39,13 +40,14 @@ public class Nick implements CommandExecutor {
                  DataOutputStream out = new DataOutputStream(b)) {
                 out.writeUTF("MaSuiteChat");
                 out.writeUTF("NickOther");
-                out.writeUTF(args[1]);
+                out.writeUTF(p.getUniqueId().toString());
                 out.writeUTF(args[0]);
+                out.writeUTF(args[1]);
                 p.sendPluginMessage(plugin, "BungeeCord", b.toByteArray());
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        return false;
+        return true;
     }
 }

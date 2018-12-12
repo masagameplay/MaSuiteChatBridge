@@ -24,7 +24,6 @@ public class Global implements CommandExecutor {
         if (!(sender instanceof Player)) {
             return false;
         }
-
         Player p = (Player) sender;
         if (args.length == 0) {
             try (ByteArrayOutputStream b = new ByteArrayOutputStream();
@@ -34,11 +33,12 @@ public class Global implements CommandExecutor {
                 out.writeUTF("global");
                 out.writeUTF(p.getUniqueId().toString());
                 p.sendPluginMessage(plugin, "BungeeCord", b.toByteArray());
+                return true;
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        if (args.length > 0){
+        if (args.length > 0) {
             try (ByteArrayOutputStream b = new ByteArrayOutputStream();
                  DataOutputStream out = new DataOutputStream(b)) {
                 out.writeUTF("MaSuiteChat");
@@ -47,10 +47,11 @@ public class Global implements CommandExecutor {
                 out.writeUTF(p.getUniqueId().toString());
                 out.writeUTF(Joiner.on(" ").join(args));
                 p.sendPluginMessage(plugin, "BungeeCord", b.toByteArray());
+                return true;
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        return false;
+        return true;
     }
 }

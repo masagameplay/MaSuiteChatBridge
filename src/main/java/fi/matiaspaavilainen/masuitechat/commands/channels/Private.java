@@ -1,6 +1,5 @@
 package fi.matiaspaavilainen.masuitechat.commands.channels;
 
-import com.google.common.base.Joiner;
 import fi.matiaspaavilainen.masuitechat.MaSuiteChatBridge;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -11,11 +10,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-public class Server implements CommandExecutor {
+public class Private implements CommandExecutor {
 
     private MaSuiteChatBridge plugin;
 
-    public Server(MaSuiteChatBridge p) {
+    public Private(MaSuiteChatBridge p) {
         plugin = p;
     }
 
@@ -24,32 +23,26 @@ public class Server implements CommandExecutor {
         if (!(sender instanceof Player)) {
             return false;
         }
-
         Player p = (Player) sender;
-        if (args.length == 0) {
-            try (ByteArrayOutputStream b = new ByteArrayOutputStream();
-                 DataOutputStream out = new DataOutputStream(b)) {
-                out.writeUTF("MaSuiteChat");
-                out.writeUTF("ToggleChannel");
-                out.writeUTF("server");
-                out.writeUTF(p.getUniqueId().toString());
-                p.sendPluginMessage(plugin, "BungeeCord", b.toByteArray());
-            } catch (IOException e) {
-                e.printStackTrace();
+        if (args.length > 1) {
+            StringBuilder msg = new StringBuilder();
+            int i;
+            for (i = 1; i < args.length; i++) {
+                msg.append(args[i]).append(" ");
             }
-        }
-        if (args.length > 0) {
             try (ByteArrayOutputStream b = new ByteArrayOutputStream();
                  DataOutputStream out = new DataOutputStream(b)) {
                 out.writeUTF("MaSuiteChat");
                 out.writeUTF("SendMessage");
-                out.writeUTF("server");
                 out.writeUTF(p.getUniqueId().toString());
-                out.writeUTF(Joiner.on(" ").join(args));
+                out.writeUTF("Private");
+                out.writeUTF(args[0]);
+                out.writeUTF(msg.toString());
                 p.sendPluginMessage(plugin, "BungeeCord", b.toByteArray());
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        } else {
         }
         return true;
     }
