@@ -25,13 +25,13 @@ public class MaSuiteChatBridge extends JavaPlugin implements Listener {
         this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
         this.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new Channel(this));
 
-        getCommand("mail").setExecutor(new Mail(this));
+
 
         registerCommands();
     }
 
 
-    public void registerCommands(){
+    private void registerCommands(){
         // Channels
         getCommand("staff").setExecutor(new Staff(this));
         getCommand("global").setExecutor(new Global(this));
@@ -42,6 +42,9 @@ public class MaSuiteChatBridge extends JavaPlugin implements Listener {
 
         // Nick
         getCommand("nick").setExecutor(new Nick(this));
+
+        // Mail
+        getCommand("mail").setExecutor(new Mail(this));
     }
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onMessage(AsyncPlayerChatEvent e) {
