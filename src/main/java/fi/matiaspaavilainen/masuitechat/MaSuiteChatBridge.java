@@ -3,12 +3,14 @@ package fi.matiaspaavilainen.masuitechat;
 import fi.matiaspaavilainen.masuitechat.commands.Mail;
 import fi.matiaspaavilainen.masuitechat.commands.Nick;
 import fi.matiaspaavilainen.masuitechat.commands.Reply;
+import fi.matiaspaavilainen.masuitechat.commands.ResetNick;
 import fi.matiaspaavilainen.masuitechat.commands.channels.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.ByteArrayOutputStream;
@@ -17,6 +19,7 @@ import java.io.IOException;
 
 public class MaSuiteChatBridge extends JavaPlugin implements Listener {
 
+    public Config config = new Config(this);
 
     @Override
     public void onEnable() {
@@ -25,13 +28,13 @@ public class MaSuiteChatBridge extends JavaPlugin implements Listener {
         this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
         this.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new Channel(this));
 
-
-
         registerCommands();
+
+        config.createConfigs();
     }
 
 
-    private void registerCommands(){
+    private void registerCommands() {
         // Channels
         getCommand("staff").setExecutor(new Staff(this));
         getCommand("global").setExecutor(new Global(this));
@@ -42,10 +45,12 @@ public class MaSuiteChatBridge extends JavaPlugin implements Listener {
 
         // Nick
         getCommand("nick").setExecutor(new Nick(this));
+        getCommand("resetnick").setExecutor(new ResetNick(this));
 
         // Mail
         getCommand("mail").setExecutor(new Mail(this));
     }
+
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onMessage(AsyncPlayerChatEvent e) {
         e.setCancelled(true);
@@ -57,7 +62,7 @@ public class MaSuiteChatBridge extends JavaPlugin implements Listener {
             out.writeUTF("Chat");
             out.writeUTF(p.getUniqueId().toString());
             out.writeUTF(e.getMessage());
-            p.sendPluginMessage(this, "BungeeCord", b.toByteArray());
+            getServer().getScheduler().runTaskAsynchronously(this, () -> p.sendPluginMessage(this, "BungeeCord", b.toByteArray()));
         } catch (IOException e1) {
             e1.printStackTrace();
         }

@@ -34,15 +34,17 @@ public class Private implements CommandExecutor {
                  DataOutputStream out = new DataOutputStream(b)) {
                 out.writeUTF("MaSuiteChat");
                 out.writeUTF("SendMessage");
+                out.writeUTF("private");
                 out.writeUTF(p.getUniqueId().toString());
-                out.writeUTF("Private");
                 out.writeUTF(args[0]);
                 out.writeUTF(msg.toString());
                 p.sendPluginMessage(plugin, "BungeeCord", b.toByteArray());
+                return true;
             } catch (IOException e) {
                 e.printStackTrace();
             }
         } else {
+            // TODO: SYNTAX MESSAGE
         }
         return true;
     }

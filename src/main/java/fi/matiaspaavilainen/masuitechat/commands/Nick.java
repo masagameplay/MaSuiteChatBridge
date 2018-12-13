@@ -1,6 +1,8 @@
 package fi.matiaspaavilainen.masuitechat.commands;
 
 import fi.matiaspaavilainen.masuitechat.MaSuiteChatBridge;
+import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -47,6 +49,8 @@ public class Nick implements CommandExecutor {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        } else {
+            p.spigot().sendMessage(new TextComponent(ChatColor.translateAlternateColorCodes('&', plugin.config.getSyntaxes().getString("nick.set"))));
         }
         return true;
     }
