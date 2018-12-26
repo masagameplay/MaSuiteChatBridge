@@ -5,12 +5,13 @@ import fi.matiaspaavilainen.masuitechat.commands.Nick;
 import fi.matiaspaavilainen.masuitechat.commands.Reply;
 import fi.matiaspaavilainen.masuitechat.commands.ResetNick;
 import fi.matiaspaavilainen.masuitechat.commands.channels.*;
+import net.milkbowl.vault.chat.Chat;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.ByteArrayOutputStream;
@@ -20,17 +21,23 @@ import java.io.IOException;
 public class MaSuiteChatBridge extends JavaPlugin implements Listener {
 
     public Config config = new Config(this);
+    private static Chat chat = null;
 
     @Override
     public void onEnable() {
         super.onEnable();
         getServer().getPluginManager().registerEvents(this, this);
         this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
-        this.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new Channel(this));
+        this.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new ChatMessagingChannel(this));
 
         registerCommands();
 
         config.createConfigs();
+        setupChat();
+        if (chat == null) {
+            System.out.println("[MaSuite] [Core] Vault not found... Disabling...");
+            getServer().getPluginManager().disablePlugin(this);
+        }
     }
 
 
@@ -66,5 +73,18 @@ public class MaSuiteChatBridge extends JavaPlugin implements Listener {
         } catch (IOException e1) {
             e1.printStackTrace();
         }
+    }
+
+    private boolean setupChat() {
+        RegisteredServiceProvider<Chat> chatProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.chat.Chat.class);
+        if (chatProvider != null) {
+            chat = chatProvider.getProvider();
+        }
+
+        return (chat != null);
+    }
+
+    public Chat getChat() {
+        return chat;
     }
 }
