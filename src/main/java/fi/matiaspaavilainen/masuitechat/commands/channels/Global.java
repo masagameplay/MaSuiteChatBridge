@@ -32,7 +32,8 @@ public class Global implements CommandExecutor {
                 out.writeUTF("ToggleChannel");
                 out.writeUTF("global");
                 out.writeUTF(p.getUniqueId().toString());
-                p.sendPluginMessage(plugin, "BungeeCord", b.toByteArray());
+                plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () ->
+                        p.sendPluginMessage(plugin, "BungeeCord", b.toByteArray()));
                 return true;
             } catch (IOException e) {
                 e.printStackTrace();
@@ -46,7 +47,8 @@ public class Global implements CommandExecutor {
                 out.writeUTF("global");
                 out.writeUTF(p.getUniqueId().toString());
                 out.writeUTF(Joiner.on(" ").join(args));
-                p.sendPluginMessage(plugin, "BungeeCord", b.toByteArray());
+                plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () ->
+                        p.sendPluginMessage(plugin, "BungeeCord", b.toByteArray()));
                 return true;
             } catch (IOException e) {
                 e.printStackTrace();

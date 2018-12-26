@@ -38,7 +38,8 @@ public class Private implements CommandExecutor {
                 out.writeUTF(p.getUniqueId().toString());
                 out.writeUTF(args[0]);
                 out.writeUTF(msg.toString());
-                p.sendPluginMessage(plugin, "BungeeCord", b.toByteArray());
+                plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () ->
+                        p.sendPluginMessage(plugin, "BungeeCord", b.toByteArray()));
                 return true;
             } catch (IOException e) {
                 e.printStackTrace();

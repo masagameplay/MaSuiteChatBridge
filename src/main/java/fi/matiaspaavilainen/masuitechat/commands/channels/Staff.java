@@ -33,7 +33,8 @@ public class Staff implements CommandExecutor {
                 out.writeUTF("ToggleChannel");
                 out.writeUTF("staff");
                 out.writeUTF(p.getUniqueId().toString());
-                p.sendPluginMessage(plugin, "BungeeCord", b.toByteArray());
+                plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () ->
+                        p.sendPluginMessage(plugin, "BungeeCord", b.toByteArray()));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -45,7 +46,8 @@ public class Staff implements CommandExecutor {
                 out.writeUTF("staff");
                 out.writeUTF(p.getUniqueId().toString());
                 out.writeUTF(Joiner.on(" ").join(args));
-                p.sendPluginMessage(plugin, "BungeeCord", b.toByteArray());
+                plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () ->
+                        p.sendPluginMessage(plugin, "BungeeCord", b.toByteArray()));
             } catch (IOException e) {
                 e.printStackTrace();
             }
