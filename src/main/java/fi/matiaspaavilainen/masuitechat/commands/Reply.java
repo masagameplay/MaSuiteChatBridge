@@ -15,23 +15,26 @@ public class Reply implements CommandExecutor {
 
     private MaSuiteChatBridge plugin;
 
-    public Reply(MaSuiteChatBridge p){
+    public Reply(MaSuiteChatBridge p) {
         plugin = p;
     }
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
-        if(!(sender instanceof Player)){
+        if (!(sender instanceof Player)) {
             return false;
         }
-    Player p = (Player) sender;
-        if(args.length > 0 ){
+        Player p = (Player) sender;
+        if (args.length > 0) {
             try (ByteArrayOutputStream b = new ByteArrayOutputStream();
                  DataOutputStream out = new DataOutputStream(b)) {
                 out.writeUTF("MaSuiteChat");
-                out.writeUTF("Reply");
+                out.writeUTF("SendMessage");
+                out.writeUTF("reply");
                 out.writeUTF(p.getUniqueId().toString());
                 out.writeUTF(Joiner.on(" ").join(args));
-                p.sendPluginMessage(plugin, "BungeeCord", b.toByteArray());
+                plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () ->
+                        p.sendPluginMessage(plugin, "BungeeCord", b.toByteArray()));
             } catch (IOException e) {
                 e.printStackTrace();
             }
