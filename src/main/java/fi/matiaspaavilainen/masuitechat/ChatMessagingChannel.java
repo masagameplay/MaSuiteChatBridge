@@ -50,52 +50,9 @@ public class ChatMessagingChannel implements PluginMessageListener {
                 }
             }
 
-            if (subchannel.equals("GetGroup")) {
-                ByteArrayOutputStream b = new ByteArrayOutputStream();
-                DataOutputStream out = new DataOutputStream(b);
-                try {
-                    Player player = Bukkit.getPlayer(UUID.fromString(in.readUTF()));
-                    if (p == null) {
-                        return;
-                    }
-                    out.writeUTF("SetGroup");
-                    out.writeUTF(p.getUniqueId().toString());
-                    out.writeUTF(getPrefix(p));
-                    out.writeUTF(getSuffix(p));
-                    plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () ->
-                            player.sendPluginMessage(plugin, "BungeeCord", b.toByteArray()));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-            }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-    }
-
-    private String getPrefix(Player p) {
-        if (plugin.getChat() != null) {
-            if (plugin.getChat().getPlayerPrefix(p) != null) {
-                return plugin.getChat().getPlayerPrefix(p);
-            } else if (plugin.getChat().getGroupPrefix(p.getWorld(), plugin.getChat().getPrimaryGroup(p)) != null) {
-                return plugin.getChat().getGroupPrefix(p.getWorld(), plugin.getChat().getPrimaryGroup(p));
-            }
-            return "";
-        }
-        return "";
-    }
-
-    private String getSuffix(Player p) {
-        if (plugin.getChat() != null) {
-            if (plugin.getChat().getPlayerSuffix(p) != null) {
-                return plugin.getChat().getPlayerSuffix(p);
-            } else if (plugin.getChat().getGroupSuffix(p.getWorld(), plugin.getChat().getPrimaryGroup(p)) != null) {
-                return plugin.getChat().getGroupSuffix(p.getWorld(), plugin.getChat().getPrimaryGroup(p));
-            }
-            return "";
-        }
-        return "";
     }
 }

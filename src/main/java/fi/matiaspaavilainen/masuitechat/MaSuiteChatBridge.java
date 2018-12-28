@@ -11,6 +11,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -55,7 +56,7 @@ public class MaSuiteChatBridge extends JavaPlugin implements Listener {
         getCommand("resetnick").setExecutor(new ResetNick(this));
 
         // Mail
-        getCommand("mail").setExecutor(new Mail(this));
+        //getCommand("mail").setExecutor(new Mail(this));
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -86,5 +87,51 @@ public class MaSuiteChatBridge extends JavaPlugin implements Listener {
 
     public Chat getChat() {
         return chat;
+    }
+
+    @EventHandler
+    public void onJoin(PlayerJoinEvent e) {
+        getServer().getScheduler().runTaskLaterAsynchronously(this, () -> {
+            ByteArrayOutputStream b = new ByteArrayOutputStream();
+            DataOutputStream out = new DataOutputStream(b);
+            try {
+                Player p = e.getPlayer();
+                if (p == null) {
+                    return;
+                }
+                out.writeUTF("MaSuiteChat");
+                out.writeUTF("SetGroup");
+                out.writeUTF(p.getUniqueId().toString());
+                out.writeUTF(getPrefix(p));
+                out.writeUTF(getSuffix(p));
+                getServer().getScheduler().runTaskAsynchronously(this, () -> p.sendPluginMessage(this, "BungeeCord", b.toByteArray()));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }, 10);
+    }
+
+    private String getPrefix(Player p) {
+        if (getChat() != null) {
+            if (getChat().getPlayerPrefix(p) != null) {
+                return getChat().getPlayerPrefix(p);
+            } else if (getChat().getGroupPrefix(p.getWorld(), getChat().getPrimaryGroup(p)) != null) {
+                return getChat().getGroupPrefix(p.getWorld(), getChat().getPrimaryGroup(p));
+            }
+            return "";
+        }
+        return "";
+    }
+
+    private String getSuffix(Player p) {
+        if (getChat() != null) {
+            if (getChat().getPlayerSuffix(p) != null) {
+                return getChat().getPlayerSuffix(p);
+            } else if (getChat().getGroupSuffix(p.getWorld(), getChat().getPrimaryGroup(p)) != null) {
+                return getChat().getGroupSuffix(p.getWorld(), getChat().getPrimaryGroup(p));
+            }
+            return "";
+        }
+        return "";
     }
 }

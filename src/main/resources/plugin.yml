@@ -2,6 +2,7 @@ name: MaSuiteChatBridge
 main: fi.matiaspaavilainen.masuitechat.MaSuiteChatBridge
 version: 1.4
 author: Masagameplay
+depend: [Vault]
 softdepend: [GriefPrevention, WorldGuard]
 commands:
   mail:
